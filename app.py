@@ -1,26 +1,32 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from dotenv import load_dotenv
 from flask_cors import CORS
 from google import genai
 import os
+
+# Load environment variables
 load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
 
+# Get API key
 API_KEY = os.environ.get("GEMINI_API_KEY")
 
 if not API_KEY:
     raise ValueError("❌ GEMINI_API_KEY not set in environment variables")
 
+# Initialize Gemini client
 client = genai.Client(api_key=API_KEY)
 
 
+# 🔥 HOME ROUTE (HTML PAGE)
 @app.route("/", methods=["GET"])
-def health():
-    return jsonify({"status": "ok", "message": "Chatbot backend is running."})
+def home():
+    return render_template("index.html")
 
 
+# 🔥 CHAT API
 @app.route("/chat", methods=["POST"])
 def chat():
     data = request.get_json(silent=True)
